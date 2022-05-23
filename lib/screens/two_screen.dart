@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:states_app/models/user_model.dart';
+import 'package:states_app/services/services.dart';
 
 class TwoScreen extends StatelessWidget {
    
@@ -8,16 +11,33 @@ class TwoScreen extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) {
+
+    final userService = Provider.of<UserService>(context);
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Two Screen'),
+        title: Text(
+          userService.isUserModelNotNull 
+            ? 'Name: ${userService.userModel!.name}' 
+            : 'Two Screen'
+        ),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             MaterialButton(
-              onPressed: () {},
+              onPressed: () {
+                final userModel = UserModel(
+                  name: 'Santiago',
+                  age: 19,
+                  professions: [
+                    'Fullstack Developer',
+                    'LOL Player'
+                  ]
+                );
+                userService.userModel = userModel;                
+              },
               color: Colors.blue,
               child: const Text(
                 'Set User',
@@ -27,7 +47,9 @@ class TwoScreen extends StatelessWidget {
               ),
             ),
             MaterialButton(
-              onPressed: () {},
+              onPressed: () {
+                userService.age = 25;
+              },
               color: Colors.blue,
               child: const Text(
                 'Change Age',
@@ -37,7 +59,9 @@ class TwoScreen extends StatelessWidget {
               ),
             ),
             MaterialButton(
-              onPressed: () {},
+              onPressed: () {
+                userService.addProfession();
+              },
               color: Colors.blue,
               child: const Text(
                 'Add Profession',
