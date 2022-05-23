@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:states_app/models/models.dart';
+import 'package:states_app/services/services.dart';
 
 class TwoScreen extends StatelessWidget {
    
@@ -10,14 +12,22 @@ class TwoScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Two Screen'),
+        title: StreamBuilder(
+          stream: userService.userStream,
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            return Text(snapshot.hasData ? 'Name: ${snapshot.data!.name}' : 'Two Screen');
+          },
+        ),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             MaterialButton(
-              onPressed: () {},
+              onPressed: () {
+                final userModel = UserModel(name: 'Santiago', age: 19);
+                userService.setUser(userModel);
+              },
               color: Colors.blue,
               child: const Text(
                 'Set User',
@@ -27,10 +37,12 @@ class TwoScreen extends StatelessWidget {
               ),
             ),
             MaterialButton(
-              onPressed: () {},
+              onPressed: () {
+                userService.setAge(25);
+              },
               color: Colors.blue,
               child: const Text(
-                'Change Age',
+                'Set Age',
                 style: TextStyle(
                   color: Colors.white
                 ),
