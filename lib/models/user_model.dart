@@ -1,13 +1,13 @@
 class UserModel {
 
   UserModel({
-    required this.name,
-    required this.age,
-    required this.professions
+    this.name,
+    this.age,
+    this.professions = const []
   });
 
-  String name;
-  int age;
+  String? name;
+  int? age;
   List<String> professions;
 
 }
