@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'package:states_app/models/models.dart';
+import 'package:states_app/bloc/user/user_bloc.dart';
+
 class OneScreen extends StatelessWidget {
    
   const OneScreen({
@@ -11,8 +16,26 @@ class OneScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('One Screen'),
+        actions: [
+          IconButton(
+            onPressed: () {
+              BlocProvider.of<UserBloc>(context, listen: false).add(DeleteUserEvent());
+            }, 
+            icon: const Icon(
+              Icons.delete_outline
+            )
+          )
+        ],
       ),
-      body: const UserInformation(),
+      body: BlocBuilder<UserBloc, UserState>(
+        builder: (context, state) {
+          return state.userIsNotNull 
+            ? UserInformation(userModel: state.userModel!) 
+            : const Center(
+              child: Text('No hay informacion del usuario'),
+            );
+        },
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => Navigator.pushNamed(context, 'two'),
         child: const Icon(Icons.accessibility_new),
@@ -23,8 +46,11 @@ class OneScreen extends StatelessWidget {
 
 class UserInformation extends StatelessWidget {
   const UserInformation({
-    Key? key,
+    Key? key, 
+    required this.userModel,
   }) : super(key: key);
+
+  final UserModel userModel; 
 
   @override
   Widget build(BuildContext context) {
@@ -34,38 +60,32 @@ class UserInformation extends StatelessWidget {
       padding: const EdgeInsets.all(20.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: const [
-          Text(
+        children: [
+          const Text(
             'General',
             style: TextStyle(
               fontSize: 18.0,
               fontWeight: FontWeight.bold
             ),
           ),
-          Divider(),
+          const Divider(),
           ListTile(
-            title: Text('Name:'),
+            title: Text('Name: ${userModel.name}'),
           ),
           ListTile(
-            title: Text('Age:'),
+            title: Text('Age: ${userModel.age}'),
           ),
-          Text(
+          const Text(
             'Professions',
             style: TextStyle(
               fontSize: 18.0,
               fontWeight: FontWeight.bold
             ),
           ),
-          Divider(),
-          ListTile(
-            title: Text('Prefession 1:'),
-          ),
-          ListTile(
-            title: Text('Prefession 2:'),
-          ),
-          ListTile(
-            title: Text('Prefession 3:'),
-          ),
+          const Divider(),
+          ...userModel.professions.map((e) => ListTile(
+            title: Text(e),
+          )).toList()
         ],
       ),
     );
